@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>羽你分享 - 臨打報名</title>
+    <!-- 引入 LINE LIFF SDK -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 20px; background-color: #f4f5f7; color: #333; }
+        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; margin: 0 auto; }
+        h2 { text-align: center; color: #00B900; margin-top: 0; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        select, input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #00B900; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        button:active { background-color: #009900; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🏸 臨打報名表</h2>
+    
+    <div class="form-group">
+        <label>📅 報名場次：</label>
+        <select id="sessionDate">
+            <!-- 這裡的選項會由 JavaScript 自動推算日期並填入 -->
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>👤 姓名：</label>
+        <input type="text" id="userName" placeholder="請輸入姓名 (如: 韋廷)">
+    </div>
+
+    <div class="form-group">
+        <label>🏸 等級：</label>
+        <select id="userLevel">
+            <!-- JavaScript 自動生成 1~18 級 -->
+        </select>
+    </div>
+
+    <button id="submitBtn" onclick="submitForm()">確認報名並送出</button>
+</div>
+
+<script>
+    // ⚠️ 替換成你的真實 LIFF ID
+    const myLiffId = "2011612092-2uEnQkPo"; 
+
+    // 初始化 LIFF
+    liff.init({ liffId: myLiffId }).then(() => {
+        console.log("LIFF 初始化成功");
+    }).catch((err) => {
+        console.error("LIFF 初始化失敗", err);
+    });
+
+    // --- 自動推算日期的魔法邏輯 ---
+    function getNextDay(targetDayOfWeek) {
+        let d = new Date();
+        let currentDay = d.getDay();
+        let distance = targetDayOfWeek - currentDay;
+        
+        // 如果已經過了今天，就找下個禮拜的這一天
+        if (distance < 0) {
+            distance += 7;
+        } else if (distance === 0) {
+            // 如果今天是週二，算當天的場次
+            distance = 0; 
+        }
+        
+        d.setDate(d.getDate() + distance);
+        let mm = String(d.getMonth() + 1).padStart(2, '0');
+        let dd = String(d.getDate()).padStart(2, '0');
+        let daysName = ['日', '一', '二', '三', '四', '五', '六'];
+        return `${mm}/${dd}(${daysName[d.getDay()]})`;
+    }
+
+    // 載入下個週二與週四
+    window.onload = function() {
+        let sessionSelect = document.getElementById('sessionDate');
+        let nextTue = getNextDay(2); // 2 = 星期二
+        let nextThu = getNextDay(4); // 4 = 星期四
+        
+        sessionSelect.innerHTML = `
+            <option value="${nextTue}">${nextTue} 晚上場</option>
+            <option value="${nextThu}">${nextThu} 晚上場</option>
+        `;
+
+        // 自動產生 1~18 級的選項
+        let levelSelect = document.getElementById('userLevel');
+        for(let i=1; i<=18; i++) {
+            levelSelect.innerHTML += `<option value="${i}">${i} 級</option>`;
+        }
+    };
+
+    // --- 處理表單送出 ---
+    function submitForm() {
+        let session = document.getElementById('sessionDate').value;
+        let name = document.getElementById('userName').value.trim();
+        let level = document.getElementById('userLevel').value;
+
+        if (!name) {
+            alert('請務必輸入姓名喔！');
+            return;
+        }
+
+        // 組合出要代替球友發送到聊天室的隱藏文字 (這會觸發你的 Python 機器人)
+        // 格式：+1 09/22(二) 韋廷 8
+        let msg = `+1 ${session} ${name} ${level}`;
+
+        if (!liff.isInClient()) {
+            alert('請在 LINE 裡面開啟此表單才能自動發送喔！\n組合的訊息為：' + msg);
+            return;
+        }
+
+        liff.sendMessages([{
+            type: 'text',
+            text: msg
+        }]).then(() => {
+            // 發送成功後，自動關閉表單視窗
+            liff.closeWindow();
+        }).catch((err) => {
+            alert('發送失敗，請重試: ' + err);
+        });
+    }
+</script>
+</body>
+</html>
