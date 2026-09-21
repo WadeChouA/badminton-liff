@@ -76,19 +76,22 @@
         return `${mm}/${dd}(${daysName[d.getDay()]})`;
     }
 
-    // 載入下個週二與週四
+    // 網頁載入時自動執行
     window.onload = function() {
+        // 1. 自動推算下個週二與週三
         let sessionSelect = document.getElementById('sessionDate');
-        let nextTue = getNextDay(2); // 2 = 星期二
-        let nextThu = getNextDay(3); // 3 = 星期三
+        let nextTue = getNextDay(2); // 推算星期二
+        let nextWed = getNextDay(3); // 推算星期三
         
         sessionSelect.innerHTML = `
             <option value="${nextTue}">${nextTue} 晚上場</option>
             <option value="${nextWed}">${nextWed} 晚上場</option>
         `;
 
-        // 自動產生 1~18 級的選項
+        // 2. 自動產生 1~18 級的選項
         let levelSelect = document.getElementById('userLevel');
+        // 先清空原本的選項，避免重複
+        levelSelect.innerHTML = ''; 
         for(let i=1; i<=18; i++) {
             levelSelect.innerHTML += `<option value="${i}">${i} 級</option>`;
         }
