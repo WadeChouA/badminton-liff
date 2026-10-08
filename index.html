@@ -2,131 +2,243 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>羽你分享 - 臨打報名</title>
-    <!-- 引入 LINE LIFF SDK -->
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>與你分享羽球團 - 羽球報名登記</title>
     <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 20px; background-color: #f4f5f7; color: #333; }
-        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; margin: 0 auto; }
-        h2 { text-align: center; color: #00B900; margin-top: 0; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
-        select, input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background-color: #00B900; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin-top: 10px; cursor: pointer; }
-        button:active { background-color: #009900; }
+        /* 全域樣式設定 */
+        body {
+            background-color: #F3F4F6;
+            font-family: 'Helvetica Neue', Helvetica, Arial, 'Microsoft JhengHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* 主體卡片設計 */
+        .container {
+            background-color: #FFFFFF;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+            box-sizing: border-box;
+        }
+
+        /* 標題與 Logo */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: #1F2937;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* 說明文字公告區 (美化版塊) */
+        .info-box {
+            background-color: #EFF6FF;
+            border-left: 4px solid #3B82F6;
+            padding: 12px 16px;
+            border-radius: 4px 8px 8px 4px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: #1E3A8A;
+            line-height: 1.5;
+        }
+        .info-box ul {
+            margin: 8px 0 0 0;
+            padding-left: 20px;
+        }
+
+        /* 表單欄位設計 */
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background-color: #F9FAFB;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #06C755;
+            background-color: #FFFFFF;
+        }
+
+        /* 送出按鈕 */
+        .submit-btn {
+            width: 100%;
+            background-color: #06C755;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(6, 199, 85, 0.2);
+            transition: transform 0.1s;
+        }
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>🏸 臨打報名表</h2>
-    
-    <div class="form-group">
-        <label>📅 報名場次：</label>
-        <select id="sessionDate">
-            <!-- 這裡的選項會由 JavaScript 自動推算日期並填入 -->
-        </select>
+    <div class="container">
+        <div class="header">
+            <h1>🦅 大老鷹羽球團</h1>
+        </div>
+
+        <div class="info-box">
+            <strong>📝 報名須知：</strong>
+            <ul>
+                <li>週二上限 18 人，週三上限 22 人</li>
+                <li>報名滿額系統將自動暫停登記</li>
+                <li>若需候補，請至球團大群組通知管理員</li>
+                <li>因排場系統發音問題，名字請盡量使用中文喔</li>
+            </ul>
+        </div>
+
+        <!-- 報名表單區 -->
+        <div class="form-group">
+            <label for="session">🏸 選擇場次</label>
+            <select id="session" class="form-control">
+                <!-- 這裡的值會被下面的 JavaScript 自動填入日期 -->
+                <option id="opt-tue" value=""></option>
+                <option id="opt-wed" value=""></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="name">👤 您的姓名 (或暱稱)</label>
+            <input type="text" id="name" class="form-control" placeholder="請輸入姓名" required>
+        </div>
+
+        <div class="form-group">
+            <label for="level">⭐ 羽球等級</label>
+            <select id="level" class="form-control">
+                <option value="3級">3級</option>
+                <option value="4級">4級</option>
+                <option value="5級">5級</option>
+                <option value="6級" selected>6級 (預設)</option>
+                <option value="7級">7級</option>
+                <option value="8級">8級</option>
+                <option value="9級">9級</option>
+                <option value="10級">10級</option>
+                <option value="新手">新手 / 未知</option>            </select>
+        </div>
+
+        <button class="submit-btn" onclick="sendFormData()">確認報名</button>
     </div>
 
-    <div class="form-group">
-        <label>👤 姓名：</label>
-        <input type="text" id="userName" placeholder="請輸入姓名 (如: 韋廷)">
-    </div>
+    <!-- 載入 LINE LIFF SDK -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+        // ⚠️ 請將下方的 YOUR_LIFF_ID 替換成你實際的 LIFF ID
+        const myLiffId = "YOUR_LIFF_ID"; 
 
-    <div class="form-group">
-        <label>🏸 等級：</label>
-        <select id="userLevel">
-            <!-- JavaScript 自動生成 1~18 級 -->
-        </select>
-    </div>
-
-    <button id="submitBtn" onclick="submitForm()">確認報名並送出</button>
-</div>
-
-<script>
-    // ⚠️ 替換成你的真實 LIFF ID
-    const myLiffId = "2011612092-2uEnQkPo"; 
-
-    // 初始化 LIFF
-    liff.init({ liffId: myLiffId }).then(() => {
-        console.log("LIFF 初始化成功");
-    }).catch((err) => {
-        console.error("LIFF 初始化失敗", err);
-    });
-
-    // --- 自動推算日期的魔法邏輯 ---
-    function getNextDay(targetDayOfWeek) {
-        let d = new Date();
-        let currentDay = d.getDay();
-        let distance = targetDayOfWeek - currentDay;
-        
-        // 如果已經過了今天，就找下個禮拜的這一天
-        if (distance < 0) {
-            distance += 7;
-        } else if (distance === 0) {
-            // 如果今天是週二，算當天的場次
-            distance = 0; 
-        }
-        
-        d.setDate(d.getDate() + distance);
-        let mm = String(d.getMonth() + 1).padStart(2, '0');
-        let dd = String(d.getDate()).padStart(2, '0');
-        let daysName = ['日', '一', '二', '三', '四', '五', '六'];
-        return `${mm}/${dd}(${daysName[d.getDay()]})`;
-    }
-
-    // 網頁載入時自動執行
-    window.onload = function() {
-        // 1. 自動推算下個週二與週三
-        let sessionSelect = document.getElementById('sessionDate');
-        let nextTue = getNextDay(2); // 推算星期二
-        let nextWed = getNextDay(3); // 推算星期三
-        
-        sessionSelect.innerHTML = `
-            <option value="${nextTue}">${nextTue} 晚上場</option>
-            <option value="${nextWed}">${nextWed} 晚上場</option>
-        `;
-
-        // 2. 自動產生 1~18 級的選項
-        let levelSelect = document.getElementById('userLevel');
-        // 先清空原本的選項，避免重複
-        levelSelect.innerHTML = ''; 
-        for(let i=1; i<=18; i++) {
-            levelSelect.innerHTML += `<option value="${i}">${i} 級</option>`;
-        }
-    };
-
-    // --- 處理表單送出 ---
-    function submitForm() {
-        let session = document.getElementById('sessionDate').value;
-        let name = document.getElementById('userName').value.trim();
-        let level = document.getElementById('userLevel').value;
-
-        if (!name) {
-            alert('請務必輸入姓名喔！');
-            return;
+        // ==========================================
+        // 💡 自動計算下次星期二與星期三的日期
+        // ==========================================
+        function getNextDateString(targetDayOfWeek) {
+            const d = new Date();
+            const currentDay = d.getDay();
+            let daysUntil = targetDayOfWeek - currentDay;
+            
+            // 如果今天已經超過該星期（例如今天是週四，目標是週二），就自動加 7 天排到下週
+            if (daysUntil < 0) {
+                daysUntil += 7;
+            }
+            d.setDate(d.getDate() + daysUntil);
+            
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const date = String(d.getDate()).padStart(2, '0');
+            return `${month}/${date}`; // 回傳格式如 "10/13"
         }
 
-        // 組合出要代替球友發送到聊天室的隱藏文字 (這會觸發你的 Python 機器人)
-        // 格式：+1 09/22(二) 韋廷 8
-        let msg = `+1 ${session} ${name} ${level}`;
+        // 網頁載入時，自動把日期塞進下拉選單裡
+        document.addEventListener("DOMContentLoaded", () => {
+            const tueDate = getNextDateString(2); // 2 代表星期二
+            const wedDate = getNextDateString(3); // 3 代表星期三
 
-        if (!liff.isInClient()) {
-            alert('請在 LINE 裡面開啟此表單才能自動發送喔！\n組合的訊息為：' + msg);
-            return;
-        }
+            const optTue = document.getElementById('opt-tue');
+            optTue.value = `${tueDate}(二)`;
+            optTue.textContent = `星期二 (${tueDate})`;
 
-        liff.sendMessages([{
-            type: 'text',
-            text: msg
-        }]).then(() => {
-            // 發送成功後，自動關閉表單視窗
-            liff.closeWindow();
-        }).catch((err) => {
-            alert('發送失敗，請重試: ' + err);
+            const optWed = document.getElementById('opt-wed');
+            optWed.value = `${wedDate}(三)`;
+            optWed.textContent = `星期三 (${wedDate})`;
         });
-    }
-</script>
+
+        // ==========================================
+        // LIFF 初始化與發送資料邏輯
+        // ==========================================
+        function initializeLiff(myLiffId) {
+            liff.init({ liffId: myLiffId })
+                .then(() => {
+                    if (!liff.isLoggedIn()) {
+                        liff.login();
+                    }
+                })
+                .catch((err) => {
+                    console.error('LIFF 初始化失敗', err);
+                });
+        }
+
+        initializeLiff(myLiffId);
+
+        function sendFormData() {
+            const session = document.getElementById('session').value;
+            const name = document.getElementById('name').value.trim();
+            const level = document.getElementById('level').value;
+
+            if (name === "") {
+                alert("請輸入您的姓名喔！");
+                return;
+            }
+
+            // 組合字串，例如: "+1 10/13(二) 德德 6級"
+            const message = `+1 ${session} ${name} ${level}`;
+
+            if (liff.isInClient()) {
+                liff.sendMessages([
+                    {
+                        type: 'text',
+                        text: message
+                    }
+                ]).then(() => {
+                    alert("✅ 報名資料已送出！請關閉此視窗查看結果。");
+                    liff.closeWindow(); 
+                }).catch((err) => {
+                    console.error('訊息發送失敗', err);
+                    alert("送出失敗，請確認網路連線或重試。");
+                });
+            } else {
+                alert(`請在 LINE APP 內開啟此報名表單。\n(模擬送出資料: ${message})`);
+            }
+        }
+    </script>
 </body>
 </html>
