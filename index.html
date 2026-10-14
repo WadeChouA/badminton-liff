@@ -162,20 +162,28 @@
         // ==========================================
         // 💡 自動計算下次星期二與星期三的日期
         // ==========================================
+        // 💡 升級版：晚上 10 點自動換週的日期計算
         function getNextDateString(targetDayOfWeek) {
             const d = new Date();
             const currentDay = d.getDay();
+            const currentHour = d.getHours(); // 取得現在的小時 (0-23)
+            
             let daysUntil = targetDayOfWeek - currentDay;
             
-            // 如果今天已經超過該星期（例如今天是週四，目標是週二），就自動加 7 天排到下週
+            // 如果今天已經超過該星期，自動加 7 天排到下週
             if (daysUntil < 0) {
                 daysUntil += 7;
+            } 
+            // ⭐️ 關鍵魔法：如果剛好是打球當天，而且時間已經過了晚上 22:00，也自動加 7 天！
+            else if (daysUntil === 0 && currentHour >= 22) {
+                daysUntil += 7;
             }
+            
             d.setDate(d.getDate() + daysUntil);
             
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const date = String(d.getDate()).padStart(2, '0');
-            return `${month}/${date}`; // 回傳格式如 "10/13"
+            return `${month}/${date}`; 
         }
 
         // 網頁載入時，自動把日期塞進下拉選單裡
